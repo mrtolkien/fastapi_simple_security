@@ -46,7 +46,7 @@ class SQLiteAccess:
                 (api_key, is_active, never_expire, creation_date, latest_query_date, total_queries) 
                 VALUES(?, ?, ?, ?, ?, ?)
             """,
-                (api_key, 1, 1 if never_expire else None, datetime.utcnow().isoformat(timespec="seconds"), None, 0),
+                (api_key, 1, 1 if never_expire else 0, datetime.utcnow().isoformat(timespec="seconds"), None, 0),
             )
             connection.commit()
 
