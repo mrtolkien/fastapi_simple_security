@@ -1,7 +1,7 @@
 import sqlite3
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Tuple
 
 
@@ -12,6 +12,13 @@ class SQLiteAccess:
         except KeyError:
             self.db_location = "/app/sqlite.db"
 
+        try:
+            self.expiration_limit = int(os.environ["FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION"])
+        except KeyError:
+            self.expiration_limit = 15
+
+        self.init_db()
+
     def init_db(self):
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
@@ -20,6 +27,7 @@ class SQLiteAccess:
         CREATE TABLE IF NOT EXISTS fastapi_simple_security (
             api_key TEXT PRIMARY KEY,
             is_active INTEGER,
+            never_expire INTEGER,
             creation_date TEXT,
             latest_query_date TEXT,
             total_queries INTEGER)
@@ -27,7 +35,7 @@ class SQLiteAccess:
             )
             connection.commit()
 
-    def create_key(self) -> str:
+    def create_key(self, never_expire) -> str:
         api_key = str(uuid.uuid4())
 
         with sqlite3.connect(self.db_location) as connection:
@@ -35,10 +43,10 @@ class SQLiteAccess:
             c.execute(
                 """
                 INSERT INTO fastapi_simple_security 
-                (api_key, is_active, creation_date, latest_query_date, total_queries) 
-                VALUES(?, ?, ?, ?, ?)
+                (api_key, is_active, never_expire, creation_date, latest_query_date, total_queries) 
+                VALUES(?, ?, ?, ?, ?, ?)
             """,
-                (api_key, 1, datetime.utcnow().isoformat(timespec="seconds"), None, 0),
+                (api_key, 1, 1 if never_expire else None, datetime.utcnow().isoformat(timespec="seconds"), None, 0),
             )
             connection.commit()
 
@@ -72,14 +80,13 @@ class SQLiteAccess:
         Args:
              api_key: the API key to validate
         """
-        # TODO Add automatic expiration for older keys through an environment variable
 
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
 
             c.execute(
                 """
-            SELECT is_active, total_queries, creation_date 
+            SELECT is_active, total_queries, creation_date, never_expire
             FROM fastapi_simple_security 
             WHERE api_key = ?""",
                 [api_key],
@@ -87,8 +94,18 @@ class SQLiteAccess:
 
             response = c.fetchone()
 
-            # If we cannot fetch a row or is_active is not 1, we return False
-            if not response or response[0] != 1:
+            if (
+                # Cannot fetch a row
+                not response
+                # Inactive
+                or response[0] != 1
+                # Expired key
+                or (
+                    not response[3]
+                    and datetime.fromisoformat(response[2])
+                    < (datetime.utcnow() - timedelta(days=self.expiration_limit))
+                )
+            ):
                 return False
 
             # If we get there, this means it’s an active API key that’s in the database. We update the table.
@@ -116,7 +133,7 @@ class SQLiteAccess:
             # TODO Add filtering on age of API key?
             c.execute(
                 """
-            SELECT api_key, is_active, creation_date, latest_query_date, total_queries 
+            SELECT api_key, is_active, never_expire, creation_date, latest_query_date, total_queries 
             FROM fastapi_simple_security
             ORDER BY latest_query_date DESC
             """,

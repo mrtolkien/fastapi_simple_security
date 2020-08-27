@@ -1,4 +1,5 @@
 from typing import List, Optional
+import os
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -7,19 +8,23 @@ from fastapi_simple_security._security_secret import secret_based_security
 from fastapi_simple_security._sqlite_access import sqlite_access
 
 api_key_router = APIRouter()
-# TODO Add an environment variable to hide it in docs
+
+show_endpoints = False if "FASTAPI_SIMPLE_SECURITY_HIDE_DOCS" in os.environ else True
 
 
-@api_key_router.get("/new", dependencies=[Depends(secret_based_security)])
-def get_new_api_key() -> str:
+@api_key_router.get("/new", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
+def get_new_api_key(never_expires=None) -> str:
     """
+    Args:
+        never_expires: if set, the created API key will never be considered expired
+
     Returns:
         api_key: a newly generated API key
     """
-    return sqlite_access.create_key()
+    return sqlite_access.create_key(never_expires)
 
 
-@api_key_router.get("/revoke", dependencies=[Depends(secret_based_security)])
+@api_key_router.get("/revoke", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
 def revoke_api_key(api_key: str):
     """
     Revokes the usage of the given API key
@@ -42,7 +47,9 @@ class UsageLogs(BaseModel):
     logs: List[UsageLog]
 
 
-@api_key_router.get("/logs", dependencies=[Depends(secret_based_security)], response_model=UsageLogs)
+@api_key_router.get(
+    "/logs", dependencies=[Depends(secret_based_security)], response_model=UsageLogs, include_in_schema=show_endpoints
+)
 def get_api_key_usage_logs():
     """
     Returns usage information for all API keys
