@@ -1,4 +1,4 @@
-# fastapi_simple_security
+# FastAPI simple security
 API key based security package for FastAPI, focused on simplicity of use:
 - Full functionality out of the box, no configuration required
 - API key security with local `sqlite` backend, working with both header and query parameters
@@ -10,7 +10,7 @@ API key based security package for FastAPI, focused on simplicity of use:
 
 # Usage
 
-## Application
+## Creating an application
 
 ```python
 from fastapi_simple_security import api_key_router, api_key_security
