@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  api:
+    image: fastapi_simple_security
+    container_name: fastapi_simple_security
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - target: 80
+        published: 8080
+    volumes:
+      - type: bind
+        source: ./app
+        target: /app
+      - type: bind
+        source: ./fastapi_simple_security
+        target: /app/fastapi_simple_security
+    command: /start-reload.sh
