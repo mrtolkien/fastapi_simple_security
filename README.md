@@ -8,7 +8,7 @@ This package depends only on fastapi and the python standard library.
 
 # Usage
 
-Example code to secure an endpoint and add endpoints to manage API keys:
+Example code to secure an endpoint and add `/auth/` endpoints to manage API keys:
 ```python
 import fastapi_simple_security
 from fastapi import Depends, FastAPI
@@ -22,14 +22,15 @@ async def root():
     return {"message": "This is a secured endpoint"} 
 ```
 
-# Configuration
+# Configuration and persistence
 Environment variables:
 - `FASTAPI_SIMPLE_SECURITY_SECRET`: the master key for the admin. Allows generation of new API keys, revoking of
  existing ones, and API key usage viewing. 
-- `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: the location of the local sqlite database file. /app/sqlite.db by default.
+- `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: the location of the local sqlite database file. /app/sqlite.db by default. When
+running the app inside Docker you can use a bind mount for persistence.
 
 # Contributing
-The attached docker image runs a test app on `localhost:8080`. Run it with:
+The attached docker image runs a test app on `localhost:8080` with secret key `TEST_SECRET`. Run it with:
 ```shell script
 docker-compose build && docker-compose up -d
 ```

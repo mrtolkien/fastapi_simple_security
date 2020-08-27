@@ -3,6 +3,8 @@ from fastapi.security import APIKeyQuery, APIKeyHeader
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_403_FORBIDDEN
 
+from fastapi_simple_security._sqlite_access import sqlite_access
+
 API_KEY_NAME = "access_token"
 
 api_key_query = APIKeyQuery(name=API_KEY_NAME, scheme_name="API key query", auto_error=False)
@@ -12,10 +14,11 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, scheme_name="API key header", a
 async def api_key_security(
     query_param: str = Security(api_key_query), header_param: str = Security(api_key_header),
 ):
-    # TODO API key testing logic here
-    if query_param == "12345":
+    if not query_param and not header_param:
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="An API key must be passed as query or header")
+    elif query_param and sqlite_access.check_key(query_param):
         return query_param
-    elif header_param == "12345":
+    elif header_param and sqlite_access.check_key(query_param):
         return header_param
     else:
-        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials")
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Wrong or revoked API key.")

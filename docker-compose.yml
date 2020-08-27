@@ -3,11 +3,13 @@ version: "3.8"
 services:
   api:
     image: fastapi_simple_security
-    container_name: fastapi_simple_security
+    container_name: fastapi_simple_security_dev
     restart: always
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - FASTAPI_SIMPLE_SECURITY_SECRET=TEST_SECRET
     ports:
       - target: 80
         published: 8080
