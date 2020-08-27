@@ -1,63 +1,87 @@
 # fastapi_simple_security
 API key based security package for FastAPI, focused on simplicity of use:
-- Full functionality out of the box with no additional configuration required
-- Single-function API key security with local `sqlite` backend, working with both header and query parameters
+- Full functionality out of the box, no configuration required
+- API key security with local `sqlite` backend, working with both header and query parameters
 - Automatic key creation, revoking, and usage logs through administrator endpoints
+- No dependencies, only requiring `FastAPI` and the python standard library 
 
 # Installation
 `pip install fastapi_simple_security`
 
-This package depends only on fastapi and the python standard library.
-
 # Usage
 
 ## Application
-Example code to secure an endpoint and add `/auth/` endpoints to manage API keys:
+
 ```python
-import fastapi_simple_security
+from fastapi_simple_security import api_key_router, api_key_security
 from fastapi import Depends, FastAPI
 
 app = FastAPI()
 
-app.include_router(fastapi_simple_security.api_key_router, prefix="/auth", tags=["_auth"])
+app.include_router(api_key_router, prefix="/auth", tags=["_auth"])
 
-@app.get("/secure_endpoint", dependencies=[Depends(fastapi_simple_security.api_key_security)])
-async def root():
-    return {"message": "This is a secured endpoint"} 
+@app.get("/secure", dependencies=[Depends(api_key_security)])
+async def secure_endpoint():
+    return {"message": "This is a secure endpoint"} 
 ```
+
+Resulting app is:
+
+![app](images/auth_endpoints.png)
 
 ## API key creation through docs
 
-Go to `/docs` on your API and inform your secret key. All the administrator endpoints only support header security to 
-make sure the secret key is not inadvertently shared when sharing an URL:
+Start your API and check the logs for the automatically generated secret key if you did not provide one through
+environment variables.
+
+![secret](images/secret.png)
+
+Go to `/docs` on your API and inform this secret key in the `Authorize/Secret header` box.
+All the administrator endpoints only  support header security to make sure the secret key is not inadvertently 
+shared when sharing an URL.
+
 ![secret_header](images/secret_header.png)
 
-Then, you can use `/auth/new` to generate a new API key. If you set `never_expire`, the key will not be expired
-automatically:
-![secret_header](images/new_api_key.png)
+Then, you can use `/auth/new` to generate a new API key.
 
-You can of course automate API key acquisition through python if you prefer to by using the endpoints directly. If you
-decide to do so, you can hide the functions from the doc with the environment variable 
+![api key](images/new_api_key.png)
+
+And finally, you can use this API key to access the secure endpoint.
+
+![secure endpoint](images/secure_endpoint.png)
+
+## API key creation in python
+
+You can of course automate API key acquisition through python with `requests` and directly querying the endpoints.
+
+If you do so, you can hide the endpoints from your API documentation with the environment variable
 `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`.
 
-# Configuration and persistence
+# Configuration
 Environment variables:
-- `FASTAPI_SIMPLE_SECURITY_SECRET`: the master key for the admin. Allows generation of new API keys, revoking of
- existing ones, and API key usage viewing.
-- `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: if set, the API key management endpoints will not appear in the documentation.
-- `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: how many days until an API key is considered automatically expired.
-Defaults to 15 days.
-- `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: the location of the local sqlite database file. /app/sqlite.db by default. When
-running the app inside Docker you can use a bind mount for persistence.
+- `FASTAPI_SIMPLE_SECURITY_SECRET`: Secret administrator key
+    - Generated automatically on server startup if not provided
+    - Allows generation of new API keys, revoking of existing ones, and API key usage view
+    - It being compromised compromises the security of the API
+- `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
+- `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
+    - /app/sqlite.db by default
+    - When running the app inside Docker, use a bind mount for persistence.
+- `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
+    - 15 days by default
 
 # Contributing
+
+## Running the dev environment
+
 The attached docker image runs a test app on `localhost:8080` with secret key `TEST_SECRET`. Run it with:
 ```shell script
-docker-compose build && docker-compose up -d
+git clone https://github.com/mrtolkien/fastapi_simple_security.git . && docker-compose build && docker-compose up
 ```
 
-Currently wanted contributions are:
+## Needed contributions
+
 - Unit tests
 - More options with sensible defaults
-- Full per-API key logging options
-- Offering more back-end options for api keys storage
+- Logging per API key?
+- More back-end options for API key storage?

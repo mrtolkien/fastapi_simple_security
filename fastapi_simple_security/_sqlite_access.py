@@ -108,6 +108,7 @@ class SQLiteAccess:
             ):
                 return False
 
+            # TODO Run the update in another thread to return True directly
             # If we get there, this means it’s an active API key that’s in the database. We update the table.
             c.execute(
                 """
