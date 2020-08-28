@@ -2,7 +2,7 @@
 API key based security package for FastAPI, focused on simplicity of use:
 - Full functionality out of the box, no configuration required
 - API key security with local `sqlite` backend, working with both header and query parameters
-- Automatic key creation, revoking, and usage logs through administrator endpoints
+- Automatic key creation, revoking, deprecation, and usage logs through administrator endpoints
 - No dependencies, only requiring `FastAPI` and the python standard library 
 
 # Installation

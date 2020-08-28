@@ -7,7 +7,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setuptools.setup(
     name="fastapi_simple_security",
-    version="0.1a",
+    version="0.1",
     packages=["fastapi_simple_security"],
     url="https://github.com/mrtolkien/fastapi_simple_security",
     license="MIT",

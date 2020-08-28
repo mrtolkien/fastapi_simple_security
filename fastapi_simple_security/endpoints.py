@@ -35,11 +35,23 @@ def revoke_api_key(api_key: str):
     return sqlite_access.revoke_key(api_key)
 
 
+@api_key_router.get("/renew", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
+def renew_api_key(api_key: str, expiration_date: str = None):
+    """
+    Renews the chosen API key, reactivating it if it was revoked.
+
+    Args:
+        api_key: the API key to renew
+        expiration_date: the new expiration date in ISO format
+    """
+    return sqlite_access.renew_key(api_key, expiration_date)
+
+
 class UsageLog(BaseModel):
     api_key: str
     is_active: bool
     never_expire: bool
-    creation_date: str
+    expiration_date: str
     latest_query_date: Optional[str]
     total_queries: int
 
@@ -63,7 +75,7 @@ def get_api_key_usage_logs():
                 api_key=row[0],
                 is_active=row[1],
                 never_expire=row[2],
-                creation_date=row[3],
+                expiration_date=row[3],
                 latest_query_date=row[4],
                 total_queries=row[5],
             )
