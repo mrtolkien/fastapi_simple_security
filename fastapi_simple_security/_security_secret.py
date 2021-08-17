@@ -18,7 +18,7 @@ except KeyError:
         f"\t{SECRET=}"
     )
 
-SECRET_KEY_NAME = "secret_key"
+SECRET_KEY_NAME = "secret-key"  # Note: By default, nginx silently drops headers with underscores. Use hyphens instead.
 
 secret_header = APIKeyHeader(name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False)
 
