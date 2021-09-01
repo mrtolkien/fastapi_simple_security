@@ -5,7 +5,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 
 from fastapi_simple_security._sqlite_access import sqlite_access
 
-API_KEY_NAME = "api_key"
+API_KEY_NAME = "api-key"
 
 api_key_query = APIKeyQuery(name=API_KEY_NAME, scheme_name="API key query", auto_error=False)
 api_key_header = APIKeyHeader(name=API_KEY_NAME, scheme_name="API key header", auto_error=False)
