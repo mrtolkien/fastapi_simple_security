@@ -71,8 +71,8 @@ Environment variables:
   - It being compromised compromises the security of the API
 - `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
 - `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
-  - /app/sqlite.db by default
-  - When running the app inside Docker, use a bind mount for persistence.
+  - `sqlite.db` in the running directory by default
+  - When running the app inside Docker, use a bind mount for persistence
 - `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
   - 15 days by default
 

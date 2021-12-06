@@ -11,10 +11,12 @@ class SQLiteAccess:
         try:
             self.db_location = os.environ["FASTAPI_SIMPLE_SECURITY_DB_LOCATION"]
         except KeyError:
-            self.db_location = "app/sqlite.db"
+            self.db_location = "sqlite.db"
 
         try:
-            self.expiration_limit = int(os.environ["FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION"])
+            self.expiration_limit = int(
+                os.environ["FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION"]
+            )
         except KeyError:
             self.expiration_limit = 15
 
@@ -51,7 +53,9 @@ class SQLiteAccess:
                     api_key,
                     1,
                     1 if never_expire else 0,
-                    (datetime.utcnow() + timedelta(days=self.expiration_limit)).isoformat(timespec="seconds"),
+                    (
+                        datetime.utcnow() + timedelta(days=self.expiration_limit)
+                    ).isoformat(timespec="seconds"),
                     None,
                     0,
                 ),
@@ -83,21 +87,29 @@ class SQLiteAccess:
 
             # Previously revoked key. Issue a text warning and reactivate it.
             if response[0] == 0:
-                response_lines.append("This API key was revoked and has been reactivated.")
+                response_lines.append(
+                    "This API key was revoked and has been reactivated."
+                )
             # Expired key. Issue a text warning and reactivate it.
-            if (not response[3]) and (datetime.fromisoformat(response[2]) < datetime.utcnow()):
+            if (not response[3]) and (
+                datetime.fromisoformat(response[2]) < datetime.utcnow()
+            ):
                 response_lines.append("This API key was expired and is now renewed.")
 
             if not new_expiration_date:
-                parsed_expiration_date = (datetime.utcnow() + timedelta(days=self.expiration_limit)).isoformat(
-                    timespec="seconds"
-                )
+                parsed_expiration_date = (
+                    datetime.utcnow() + timedelta(days=self.expiration_limit)
+                ).isoformat(timespec="seconds")
             else:
                 try:
                     # We parse and re-write to the right timespec
-                    parsed_expiration_date = datetime.fromisoformat(new_expiration_date).isoformat(timespec="seconds")
+                    parsed_expiration_date = datetime.fromisoformat(
+                        new_expiration_date
+                    ).isoformat(timespec="seconds")
                 except ValueError:
-                    return "The expiration date could not be parsed. Please use ISO 8601."
+                    return (
+                        "The expiration date could not be parsed. Please use ISO 8601."
+                    )
 
             c.execute(
                 """
@@ -105,12 +117,17 @@ class SQLiteAccess:
             SET expiration_date = ?, is_active = 1
             WHERE api_key = ?
             """,
-                (parsed_expiration_date, api_key,),
+                (
+                    parsed_expiration_date,
+                    api_key,
+                ),
             )
 
             connection.commit()
 
-            response_lines.append(f"The new expiration date for the API key is {parsed_expiration_date}")
+            response_lines.append(
+                f"The new expiration date for the API key is {parsed_expiration_date}"
+            )
 
             return " ".join(response_lines)
 
@@ -162,7 +179,10 @@ class SQLiteAccess:
                 # Inactive
                 or response[0] != 1
                 # Expired key
-                or ((not response[3]) and (datetime.fromisoformat(response[2]) < datetime.utcnow()))
+                or (
+                    (not response[3])
+                    and (datetime.fromisoformat(response[2]) < datetime.utcnow())
+                )
             ):
                 # The key is not valid
                 return False
@@ -170,7 +190,13 @@ class SQLiteAccess:
                 # The key is valid
 
                 # We run the logging in a separate thread as writing takes some time
-                threading.Thread(target=self._update_usage, args=(api_key, response[1],)).start()
+                threading.Thread(
+                    target=self._update_usage,
+                    args=(
+                        api_key,
+                        response[1],
+                    ),
+                ).start()
 
                 # We return directly
                 return True
@@ -186,7 +212,11 @@ class SQLiteAccess:
             SET total_queries = ?, latest_query_date = ?
             WHERE api_key = ?
             """,
-                (usage_count + 1, datetime.utcnow().isoformat(timespec="seconds"), api_key),
+                (
+                    usage_count + 1,
+                    datetime.utcnow().isoformat(timespec="seconds"),
+                    api_key,
+                ),
             )
 
             connection.commit()
@@ -201,7 +231,6 @@ class SQLiteAccess:
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
 
-            # TODO Add filtering somehow
             c.execute(
                 """
             SELECT api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries 
