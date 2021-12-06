@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "fastapi_simple_security"
+version = "1.0.0"
+description = "API key-based security for FastAPI"
+authors = ["mrtolkien <gary.mialaret@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/mrtolkien/fastapi_simple_security"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+fastapi = "^0.50"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

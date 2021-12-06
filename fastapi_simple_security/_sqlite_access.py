@@ -11,7 +11,7 @@ class SQLiteAccess:
         try:
             self.db_location = os.environ["FASTAPI_SIMPLE_SECURITY_DB_LOCATION"]
         except KeyError:
-            self.db_location = "/app/sqlite.db"
+            self.db_location = "app/sqlite.db"
 
         try:
             self.expiration_limit = int(os.environ["FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION"])
