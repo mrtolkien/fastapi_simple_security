@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi_simple_security"
-version = "1.0.0"
+version = "1.0.1"
 description = "API key-based security for FastAPI"
 authors = ["mrtolkien <gary.mialaret@gmail.com>"]
 license = "MIT"
