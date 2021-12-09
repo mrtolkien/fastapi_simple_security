@@ -1,7 +1,7 @@
 from typing import List, Optional
 import os
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from fastapi_simple_security._security_secret import secret_based_security
@@ -13,11 +13,8 @@ show_endpoints = False if "FASTAPI_SIMPLE_SECURITY_HIDE_DOCS" in os.environ else
 
 
 @api_key_router.get("/new", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
-def get_new_api_key(never_expires=None) -> str:
+def get_new_api_key(never_expires: bool = Query(False, description="if set, the created API key will never be considered expired")) -> str:
     """
-    Args:
-        never_expires: if set, the created API key will never be considered expired
-
     Returns:
         api_key: a newly generated API key
     """
@@ -25,24 +22,20 @@ def get_new_api_key(never_expires=None) -> str:
 
 
 @api_key_router.get("/revoke", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
-def revoke_api_key(api_key: str):
+def revoke_api_key(api_key: str = Query(..., description="the api_key to revoke")):
     """
     Revokes the usage of the given API key
 
-    Args:
-        api_key: the api_key to revoke
     """
     return sqlite_access.revoke_key(api_key)
 
 
 @api_key_router.get("/renew", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
-def renew_api_key(api_key: str, expiration_date: str = None):
+def renew_api_key(api_key: str=Query(..., description="the API key to renew"),
+                  expiration_date: str = Query(None, description="the new expiration date in ISO format")):
     """
     Renews the chosen API key, reactivating it if it was revoked.
 
-    Args:
-        api_key: the API key to renew
-        expiration_date: the new expiration date in ISO format
     """
     return sqlite_access.renew_key(api_key, expiration_date)
 
