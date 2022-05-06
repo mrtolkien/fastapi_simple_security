@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi_simple_security"
-version = "1.0.1"
+version = "1.1"
 description = "API key-based security for FastAPI"
 authors = ["mrtolkien <gary.mialaret@gmail.com>"]
 license = "MIT"
@@ -8,9 +8,9 @@ repository = "https://github.com/mrtolkien/fastapi_simple_security"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.7"
 # 0.70 is needed to have the TestClient object
-fastapi = "^0.70"
+fastapi = ">=0.70"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
