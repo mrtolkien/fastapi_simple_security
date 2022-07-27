@@ -13,7 +13,7 @@ python = ">=3.7"
 fastapi = ">=0.70"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+pytest = "^7.0.0"
 black = {version = "^21.12b0", allow-prereleases = true}
 requests = "^2.26.0"
 
