@@ -25,6 +25,7 @@ class SQLiteAccess:
     def init_db(self):
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
+            # Create database
             c.execute(
                 """
         CREATE TABLE IF NOT EXISTS fastapi_simple_security (
@@ -37,8 +38,14 @@ class SQLiteAccess:
         """
             )
             connection.commit()
+            # Migration: Add api key name
+            try:
+                c.execute("ALTER TABLE fastapi_simple_security ADD COLUMN name TEXT")
+                connection.commit()
+            except sqlite3.OperationalError:
+                pass  # Column already exist
 
-    def create_key(self, never_expire) -> str:
+    def create_key(self, name, never_expire) -> str:
         api_key = str(uuid.uuid4())
 
         with sqlite3.connect(self.db_location) as connection:
@@ -46,8 +53,8 @@ class SQLiteAccess:
             c.execute(
                 """
                 INSERT INTO fastapi_simple_security 
-                (api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries) 
-                VALUES(?, ?, ?, ?, ?, ?)
+                (api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries, name) 
+                VALUES(?, ?, ?, ?, ?, ?, ?)
             """,
                 (
                     api_key,
@@ -58,6 +65,7 @@ class SQLiteAccess:
                     ).isoformat(timespec="seconds"),
                     None,
                     0,
+                    name,
                 ),
             )
             connection.commit()
@@ -233,7 +241,7 @@ class SQLiteAccess:
 
             c.execute(
                 """
-            SELECT api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries 
+            SELECT api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries, name
             FROM fastapi_simple_security
             ORDER BY latest_query_date DESC
             """,
