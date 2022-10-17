@@ -67,25 +67,44 @@ Environment variables:
 
 - `FASTAPI_SIMPLE_SECURITY_SECRET`: Secret administrator key
 
-  - Generated automatically on server startup if not provided
-  - Allows generation of new API keys, revoking of existing ones, and API key usage view
-  - It being compromised compromises the security of the API
+    - Generated automatically on server startup if not provided
+    - Allows generation of new API keys, revoking of existing ones, and API key usage view
+    - It being compromised compromises the security of the API
 
 - `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
 - `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
-  - `sqlite.db` in the running directory by default
-  - When running the app inside Docker, use a bind mount for persistence
+    - `sqlite.db` in the running directory by default
+    - When running the app inside Docker, use a bind mount for persistence
 - `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
-  - 15 days by default
+    - 15 days by default
 
 ## Contributing
+
+### Setting up python environment
+
+```shell script
+poetry install
+poetry shell
+```
+
+### Setting up pre-commit hooks
+
+```shell script
+pre-commit install
+```
+
+### Running tests
+
+```shell script
+pytest
+```
 
 ### Running the dev environment
 
 The attached docker image runs a test app on `localhost:8080` with secret key `TEST_SECRET`. Run it with:
 
 ```shell script
-git clone https://github.com/mrtolkien/fastapi_simple_security.git . && docker-compose build && docker-compose up
+docker-compose build && docker-compose up
 ```
 
 ## Needed contributions
