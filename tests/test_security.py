@@ -1,5 +1,7 @@
 """Basic unit testing.
 """
+import os
+
 from fastapi.testclient import TestClient
 
 
@@ -132,3 +134,16 @@ def test_no_admin_key(client: TestClient):
 def test_wrong_admin_key(client: TestClient):
     response = client.get(url="/auth/new", headers={"secret-key": "WRONG_SECRET_KEY"})
     assert response.status_code == 403
+
+
+def test_no_secret():
+    del os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"]
+
+    from fastapi_simple_security._security_secret import (  # pylint: disable=import-outside-toplevel
+        secret,
+    )
+
+    value = secret.get_secret_value()
+
+    assert value != "secret"
+    assert len(value) == 36
