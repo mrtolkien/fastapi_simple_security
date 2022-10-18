@@ -11,6 +11,8 @@ from typing import List, Optional, Tuple
 class SQLiteAccess:
     """Class handling SQLite connection and writes"""
 
+    # TODO This should not be a class, a fully functional approach is better
+
     def __init__(self):
         try:
             self.db_location = os.environ["FASTAPI_SIMPLE_SECURITY_DB_LOCATION"]
