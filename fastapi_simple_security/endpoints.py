@@ -37,7 +37,9 @@ def get_new_api_key(
     dependencies=[Depends(secret_based_security)],
     include_in_schema=show_endpoints,
 )
-def revoke_api_key(api_key: str = Query(..., description="the api_key to revoke")):
+def revoke_api_key(
+    api_key: str = Query(..., alias="api-key", description="the api_key to revoke")
+):
     """
     Revokes the usage of the given API key
 
@@ -51,14 +53,15 @@ def revoke_api_key(api_key: str = Query(..., description="the api_key to revoke"
     include_in_schema=show_endpoints,
 )
 def renew_api_key(
-    api_key: str = Query(..., description="the API key to renew"),
+    api_key: str = Query(..., alias="api-key", description="the API key to renew"),
     expiration_date: str = Query(
-        None, description="the new expiration date in ISO format"
+        None,
+        alias="expiration-date",
+        description="the new expiration date in ISO format",
     ),
 ):
     """
     Renews the chosen API key, reactivating it if it was revoked.
-
     """
     return sqlite_access.renew_key(api_key, expiration_date)
 

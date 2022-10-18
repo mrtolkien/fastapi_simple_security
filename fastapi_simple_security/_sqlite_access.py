@@ -7,6 +7,9 @@ import uuid
 from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
+from fastapi import HTTPException
+from starlette.status import HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+
 
 class SQLiteAccess:
     """Class handling SQLite connection and writes"""
@@ -88,7 +91,9 @@ class SQLiteAccess:
 
             # API key not found
             if not response:
-                return "API key not found"
+                raise HTTPException(
+                    status_code=HTTP_404_NOT_FOUND, detail="API key not found"
+                )
 
             response_lines = []
 
@@ -97,26 +102,25 @@ class SQLiteAccess:
                 response_lines.append(
                     "This API key was revoked and has been reactivated."
                 )
-            # Expired key. Issue a text warning and reactivate it.
-            if (not response[3]) and (
-                datetime.fromisoformat(response[2]) < datetime.utcnow()
-            ):
-                response_lines.append("This API key was expired and is now renewed.")
 
+            # Without an expiration date, we set it here
             if not new_expiration_date:
                 parsed_expiration_date = (
                     datetime.utcnow() + timedelta(days=self.expiration_limit)
                 ).isoformat(timespec="seconds")
+
             else:
                 try:
                     # We parse and re-write to the right timespec
                     parsed_expiration_date = datetime.fromisoformat(
                         new_expiration_date
                     ).isoformat(timespec="seconds")
-                except ValueError:
-                    return (
-                        "The expiration date could not be parsed. Please use ISO 8601."
-                    )
+                except ValueError as exc:
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail="The expiration date could not be parsed. \
+                            Please use ISO 8601.",
+                    ) from exc
 
             c.execute(
                 """
