@@ -27,7 +27,7 @@ def get_new_api_key(
     never_expires: bool = Query(
         False,
         description="if set, the created API key will never be considered expired",
-    )
+    ),
 ) -> str:
     """
     Returns:
