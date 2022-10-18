@@ -109,7 +109,6 @@ docker-compose build && docker-compose up
 
 ## Needed contributions
 
-- Unit tests
 - More options with sensible defaults
 - Logging per API key?
 - More back-end options for API key storage?
