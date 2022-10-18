@@ -1,5 +1,13 @@
 # FastAPI simple security
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit enabled][pre-commit badge]][pre-commit project]
+[![Python Tests](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml)
+[![codecov](https://codecov.io/github/mrtolkien/fastapi_simple_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/mrtolkien/fastapi_simple_security)
+
+[pre-commit badge]: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+[pre-commit project]: https://pre-commit.com/
+
 API key based security package for FastAPI, focused on simplicity of use:
 
 - Full functionality out of the box, no configuration required
@@ -67,30 +75,48 @@ Environment variables:
 
 - `FASTAPI_SIMPLE_SECURITY_SECRET`: Secret administrator key
 
-  - Generated automatically on server startup if not provided
-  - Allows generation of new API keys, revoking of existing ones, and API key usage view
-  - It being compromised compromises the security of the API
+    - Generated automatically on server startup if not provided
+    - Allows generation of new API keys, revoking of existing ones, and API key usage view
+    - It being compromised compromises the security of the API
 
 - `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
 - `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
-  - `sqlite.db` in the running directory by default
-  - When running the app inside Docker, use a bind mount for persistence
+    - `sqlite.db` in the running directory by default
+    - When running the app inside Docker, use a bind mount for persistence
 - `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
-  - 15 days by default
+    - 15 days by default
 
 ## Contributing
+
+### Setting up python environment
+
+```shell script
+poetry install
+poetry shell
+```
+
+### Setting up pre-commit hooks
+
+```shell script
+pre-commit install
+```
+
+### Running tests
+
+```shell script
+pytest
+```
 
 ### Running the dev environment
 
 The attached docker image runs a test app on `localhost:8080` with secret key `TEST_SECRET`. Run it with:
 
 ```shell script
-git clone https://github.com/mrtolkien/fastapi_simple_security.git . && docker-compose build && docker-compose up
+docker-compose build && docker-compose up
 ```
 
 ## Needed contributions
 
-- Unit tests
 - More options with sensible defaults
 - Logging per API key?
 - More back-end options for API key storage?

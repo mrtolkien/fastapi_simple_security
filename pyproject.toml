@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi_simple_security"
-version = "1.1"
+version = "1.2"
 description = "API key-based security for FastAPI"
 authors = ["mrtolkien <gary.mialaret@gmail.com>"]
 license = "MIT"
@@ -8,15 +8,27 @@ repository = "https://github.com/mrtolkien/fastapi_simple_security"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = ">=3.7.2,<4"
 # 0.70 is needed to have the TestClient object
 fastapi = ">=0.70"
+# Necessary as older versions don't work on python 3.10
+urllib3 = ">=1.26.12"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.0.0"
-black = {version = "^21.12b0", allow-prereleases = true}
+black = "^22.3.0"
 requests = "^2.26.0"
+pre-commit = "^2.20.0"
+pylint = "^2.15.4"
+isort = "^5.10.1"
+coverage = "^6.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.report]
+omit = ["tests/conftest.py"]

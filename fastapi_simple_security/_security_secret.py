@@ -1,3 +1,5 @@
+"""Secret dependency.
+"""
 import os
 import uuid
 import warnings
@@ -7,20 +9,45 @@ from fastapi.security import APIKeyHeader
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_403_FORBIDDEN
 
-try:
-    SECRET = os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"]
-except KeyError:
-    SECRET = str(uuid.uuid4())
 
-    warnings.warn(
-        f"ENVIRONMENT VARIABLE 'FASTAPI_SIMPLE_SECURITY_SECRET' NOT FOUND\n"
-        f"\tGenerated a single-use secret key for this session:\n"
-        f"\t{SECRET=}"
-    )
+class GhostLoadedSecret:
+    """Ghost-loaded secret handler"""
 
-SECRET_KEY_NAME = "secret-key"  # Note: By default, nginx silently drops headers with underscores. Use hyphens instead.
+    def __init__(self) -> None:
+        self._secret = None
 
-secret_header = APIKeyHeader(name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False)
+    @property
+    def value(self):
+        if self._secret:
+            return self._secret
+
+        else:
+            self._secret = self.get_secret_value()
+            return self.value
+
+    def get_secret_value(self):
+        try:
+            secret_value = os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"]
+
+        except KeyError:
+            secret_value = str(uuid.uuid4())
+
+            warnings.warn(
+                f"ENVIRONMENT VARIABLE 'FASTAPI_SIMPLE_SECURITY_SECRET' NOT FOUND\n"
+                f"\tGenerated a single-use secret key for this session:\n"
+                f"\t{secret_value=}"
+            )
+
+        return secret_value
+
+
+secret = GhostLoadedSecret()
+
+SECRET_KEY_NAME = "secret-key"
+
+secret_header = APIKeyHeader(
+    name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False
+)
 
 
 async def secret_based_security(header_param: str = Security(secret_header)):
@@ -35,13 +62,19 @@ async def secret_based_security(header_param: str = Security(secret_header)):
         HTTPException if the authentication failed
     """
 
-    if header_param == SECRET:
+    # We simply return True if the given secret-key has the right value
+    if header_param == secret.value:
         return True
+
+    # Error text without header param
     if not header_param:
         error = "secret_key must be passed as a header field"
+
+    # Error text with wrong header param
     else:
         error = (
-            "Wrong secret key. If not set through environment variable 'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
+            "Wrong secret key. If not set through environment variable \
+                'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
             "generated automatically at startup and appears in the server logs."
         )
 
