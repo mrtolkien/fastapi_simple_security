@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from fastapi_simple_security._sqlite_access import sqlite_access
 
 
-def test_database_migration(client: TestClient):
+def test_database_migration():
     # Emulate old db
     with sqlite3.connect(sqlite_access.db_location) as connection:
         c = connection.cursor()
@@ -36,26 +36,29 @@ def test_database_migration(client: TestClient):
 
 
 def test_api_key_name(client: TestClient, admin_key: str):
-    response = client.get(url="/auth/new", headers={"secret-key": admin_key},
-                          params={"name": "Test"})
+    response = client.get(
+        url="/auth/new", headers={"secret-key": admin_key}, params={"name": "Test"}
+    )
     assert response.status_code == 200
 
     response = client.get("/auth/logs", headers={"secret-key": admin_key})
     assert response.status_code == 200
     assert len(response.json()["logs"]) == 1
     api_key_infos = response.json()["logs"][0]
-    print(api_key_infos)
-    assert api_key_infos.get('name') == 'Test', api_key_infos
+    assert api_key_infos.get("name") == "Test", api_key_infos
 
 
 def test_api_key_never_expire(client: TestClient, admin_key: str):
     # Create with never_expires param
-    response = client.get(url="/auth/new", headers={"secret-key": admin_key},
-                          params={"never_expires": True})
+    response = client.get(
+        url="/auth/new",
+        headers={"secret-key": admin_key},
+        params={"never_expires": True},
+    )
     assert response.status_code == 200
 
     response = client.get("/auth/logs", headers={"secret-key": admin_key})
     assert response.status_code == 200
     assert len(response.json()["logs"]) == 1
     api_key_infos = response.json()["logs"][0]
-    assert api_key_infos.get('never_expire') is True, api_key_infos
+    assert api_key_infos.get("never_expire") is True, api_key_infos
