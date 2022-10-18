@@ -1,5 +1,7 @@
-from typing import List, Optional
+"""Endpoints defined by the dependency.
+"""
 import os
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
@@ -9,11 +11,20 @@ from fastapi_simple_security._sqlite_access import sqlite_access
 
 api_key_router = APIRouter()
 
-show_endpoints = False if "FASTAPI_SIMPLE_SECURITY_HIDE_DOCS" in os.environ else True
+show_endpoints = "FASTAPI_SIMPLE_SECURITY_HIDE_DOCS" not in os.environ
 
 
-@api_key_router.get("/new", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
-def get_new_api_key(never_expires: bool = Query(False, description="if set, the created API key will never be considered expired")) -> str:
+@api_key_router.get(
+    "/new",
+    dependencies=[Depends(secret_based_security)],
+    include_in_schema=show_endpoints,
+)
+def get_new_api_key(
+    never_expires: bool = Query(
+        False,
+        description="if set, the created API key will never be considered expired",
+    )
+) -> str:
     """
     Returns:
         api_key: a newly generated API key
@@ -21,7 +32,11 @@ def get_new_api_key(never_expires: bool = Query(False, description="if set, the 
     return sqlite_access.create_key(never_expires)
 
 
-@api_key_router.get("/revoke", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
+@api_key_router.get(
+    "/revoke",
+    dependencies=[Depends(secret_based_security)],
+    include_in_schema=show_endpoints,
+)
 def revoke_api_key(api_key: str = Query(..., description="the api_key to revoke")):
     """
     Revokes the usage of the given API key
@@ -30,9 +45,17 @@ def revoke_api_key(api_key: str = Query(..., description="the api_key to revoke"
     return sqlite_access.revoke_key(api_key)
 
 
-@api_key_router.get("/renew", dependencies=[Depends(secret_based_security)], include_in_schema=show_endpoints)
-def renew_api_key(api_key: str=Query(..., description="the API key to renew"),
-                  expiration_date: str = Query(None, description="the new expiration date in ISO format")):
+@api_key_router.get(
+    "/renew",
+    dependencies=[Depends(secret_based_security)],
+    include_in_schema=show_endpoints,
+)
+def renew_api_key(
+    api_key: str = Query(..., description="the API key to renew"),
+    expiration_date: str = Query(
+        None, description="the new expiration date in ISO format"
+    ),
+):
     """
     Renews the chosen API key, reactivating it if it was revoked.
 
@@ -54,7 +77,10 @@ class UsageLogs(BaseModel):
 
 
 @api_key_router.get(
-    "/logs", dependencies=[Depends(secret_based_security)], response_model=UsageLogs, include_in_schema=show_endpoints
+    "/logs",
+    dependencies=[Depends(secret_based_security)],
+    response_model=UsageLogs,
+    include_in_schema=show_endpoints,
 )
 def get_api_key_usage_logs():
     """
