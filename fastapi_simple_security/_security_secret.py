@@ -1,3 +1,5 @@
+"""Secret dependency.
+"""
 import os
 import uuid
 import warnings
@@ -18,9 +20,11 @@ except KeyError:
         f"\t{SECRET=}"
     )
 
-SECRET_KEY_NAME = "secret-key"  # Note: By default, nginx silently drops headers with underscores. Use hyphens instead.
+SECRET_KEY_NAME = "secret-key"
 
-secret_header = APIKeyHeader(name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False)
+secret_header = APIKeyHeader(
+    name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False
+)
 
 
 async def secret_based_security(header_param: str = Security(secret_header)):
@@ -35,13 +39,19 @@ async def secret_based_security(header_param: str = Security(secret_header)):
         HTTPException if the authentication failed
     """
 
+    # We simply return True if the given secret-key has the right value
     if header_param == SECRET:
         return True
+
+    # Error text without header param
     if not header_param:
         error = "secret_key must be passed as a header field"
+
+    # Error text with wrong header param
     else:
         error = (
-            "Wrong secret key. If not set through environment variable 'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
+            "Wrong secret key. If not set through environment variable \
+                'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
             "generated automatically at startup and appears in the server logs."
         )
 
