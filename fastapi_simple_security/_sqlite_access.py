@@ -1,12 +1,16 @@
-import sqlite3
+"""Interaction with SQLite database.
+"""
 import os
-import uuid
+import sqlite3
 import threading
+import uuid
 from datetime import datetime, timedelta
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 
 class SQLiteAccess:
+    """Class handling SQLite connection and writes"""
+
     def __init__(self):
         try:
             self.db_location = os.environ["FASTAPI_SIMPLE_SECURITY_DB_LOCATION"]
@@ -45,8 +49,9 @@ class SQLiteAccess:
             c = connection.cursor()
             c.execute(
                 """
-                INSERT INTO fastapi_simple_security 
-                (api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries) 
+                INSERT INTO fastapi_simple_security
+                (api_key, is_active, never_expire, expiration_date, \
+                    latest_query_date, total_queries)
                 VALUES(?, ?, ?, ?, ?, ?)
             """,
                 (
@@ -72,7 +77,7 @@ class SQLiteAccess:
             c.execute(
                 """
             SELECT is_active, total_queries, expiration_date, never_expire
-            FROM fastapi_simple_security 
+            FROM fastapi_simple_security
             WHERE api_key = ?""",
                 (api_key,),
             )
@@ -166,7 +171,7 @@ class SQLiteAccess:
             c.execute(
                 """
             SELECT is_active, total_queries, expiration_date, never_expire
-            FROM fastapi_simple_security 
+            FROM fastapi_simple_security
             WHERE api_key = ?""",
                 (api_key,),
             )
@@ -205,7 +210,8 @@ class SQLiteAccess:
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
 
-            # If we get there, this means it’s an active API key that’s in the database. We update the table.
+            # If we get there, this means it’s an active API key that’s in the database.\
+            #   We update the table.
             c.execute(
                 """
             UPDATE fastapi_simple_security
@@ -221,19 +227,21 @@ class SQLiteAccess:
 
             connection.commit()
 
-    def get_usage_stats(self) -> List[Tuple[str, int, str, str, int]]:
+    def get_usage_stats(self) -> List[Tuple[str, bool, bool, str, str, int]]:
         """
         Returns usage stats for all API keys
 
         Returns:
-            a list of tuples with values being api_key, is_active, expiration_date, latest_query_date, and total_queries
+            a list of tuples with values being api_key, is_active, expiration_date, \
+                latest_query_date, and total_queries
         """
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
 
             c.execute(
                 """
-            SELECT api_key, is_active, never_expire, expiration_date, latest_query_date, total_queries 
+            SELECT api_key, is_active, never_expire, expiration_date, \
+                latest_query_date, total_queries
             FROM fastapi_simple_security
             ORDER BY latest_query_date DESC
             """,
