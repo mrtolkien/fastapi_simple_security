@@ -9,16 +9,39 @@ from fastapi.security import APIKeyHeader
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_403_FORBIDDEN
 
-try:
-    SECRET = os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"]
-except KeyError:
-    SECRET = str(uuid.uuid4())
 
-    warnings.warn(
-        f"ENVIRONMENT VARIABLE 'FASTAPI_SIMPLE_SECURITY_SECRET' NOT FOUND\n"
-        f"\tGenerated a single-use secret key for this session:\n"
-        f"\t{SECRET=}"
-    )
+class GhostLoadedSecret:
+    """Ghost-loaded secret handler"""
+
+    def __init__(self) -> None:
+        self._secret = None
+
+    @property
+    def value(self):
+        if self._secret:
+            return self._secret
+
+        else:
+            self._secret = self.get_secret_value()
+            return self.value
+
+    def get_secret_value(self):
+        try:
+            secret_value = os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"]
+
+        except KeyError:
+            secret_value = str(uuid.uuid4())
+
+            warnings.warn(
+                f"ENVIRONMENT VARIABLE 'FASTAPI_SIMPLE_SECURITY_SECRET' NOT FOUND\n"
+                f"\tGenerated a single-use secret key for this session:\n"
+                f"\t{secret_value=}"
+            )
+
+        return secret_value
+
+
+secret = GhostLoadedSecret()
 
 SECRET_KEY_NAME = "secret-key"
 
@@ -40,7 +63,7 @@ async def secret_based_security(header_param: str = Security(secret_header)):
     """
 
     # We simply return True if the given secret-key has the right value
-    if header_param == SECRET:
+    if header_param == secret.value:
         return True
 
     # Error text without header param
