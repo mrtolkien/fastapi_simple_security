@@ -16,6 +16,9 @@ API key based security package for FastAPI, focused on simplicity of use:
 - Key creation, revocation, renewing, and usage logs handled through administrator endpoints
 - No dependencies, only requiring `FastAPI` and the python standard library
 
+This module cannot be used for any kind of distributed deployment. It's goal is to help have some basic security features
+for simple one-server API deployments, mostly during development.
+
 ## Installation
 
 `pip install fastapi_simple_security`
