@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Depends
-import fastapi_simple_security
+"""Sample app client used for testing.
+"""
+from fastapi import Depends, FastAPI
 
+import fastapi_simple_security
 
 app = FastAPI()
 
