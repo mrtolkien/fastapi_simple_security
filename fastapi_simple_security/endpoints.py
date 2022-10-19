@@ -20,16 +20,20 @@ show_endpoints = "FASTAPI_SIMPLE_SECURITY_HIDE_DOCS" not in os.environ
     include_in_schema=show_endpoints,
 )
 def get_new_api_key(
+    name: str = Query(
+        None,
+        description="set API key name",
+    ),
     never_expires: bool = Query(
         False,
         description="if set, the created API key will never be considered expired",
-    )
+    ),
 ) -> str:
     """
     Returns:
         api_key: a newly generated API key
     """
-    return sqlite_access.create_key(never_expires)
+    return sqlite_access.create_key(name, never_expires)
 
 
 @api_key_router.get(
@@ -68,6 +72,7 @@ def renew_api_key(
 
 class UsageLog(BaseModel):
     api_key: str
+    name: Optional[str]
     is_active: bool
     never_expire: bool
     expiration_date: str
@@ -100,6 +105,7 @@ def get_api_key_usage_logs():
                 expiration_date=row[3],
                 latest_query_date=row[4],
                 total_queries=row[5],
+                name=row[6],
             )
             for row in sqlite_access.get_usage_stats()
         ]
