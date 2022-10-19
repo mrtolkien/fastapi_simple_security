@@ -3,7 +3,10 @@
 import sqlite3
 
 from fastapi.testclient import TestClient
+
 from fastapi_simple_security._sqlite_access import sqlite_access
+
+# TODO Rename test files and group them properly (db tests, endpoints tests, ...)
 
 
 def test_database_migration():
