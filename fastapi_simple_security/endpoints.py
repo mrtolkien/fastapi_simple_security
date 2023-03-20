@@ -70,6 +70,29 @@ def renew_api_key(
     return sqlite_access.renew_key(api_key, expiration_date)
 
 
+@api_key_router.get(
+    "/insert",
+    dependencies=[Depends(secret_based_security)],
+    include_in_schema=show_endpoints,
+)
+def insert_api_key(
+    api_key: str = Query(..., alias="api-key", description="the API key to renew"),
+    name: str = Query(
+        None,
+        description="set API key name",
+    ),
+    expiration_date: str = Query(
+        None,
+        alias="expiration-date",
+        description="the new expiration date in ISO format",
+    ),
+):
+    """
+    Inserting a known API key, reactivating it if it was revoked.
+    """
+    return sqlite_access.insert_key(api_key, name, expiration_date)
+
+
 class UsageLog(BaseModel):
     api_key: str
     name: Optional[str]

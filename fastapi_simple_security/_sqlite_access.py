@@ -82,6 +82,55 @@ class SQLiteAccess:
 
         return api_key
 
+    def insert_key(self, api_key: str, name: str, expiration_date: str) -> str | None:
+        with sqlite3.connect(self.db_location) as connection:
+            c = connection.cursor()
+            # We run the query like check_key but will use the response differently
+            c.execute(
+                """
+            SELECT is_active, total_queries, expiration_date, never_expire
+            FROM fastapi_simple_security
+            WHERE api_key = ?""",
+                (api_key,),
+            )
+
+            response = c.fetchone()
+            if response:
+                return self.renew_key(api_key, expiration_date)
+
+            # Else: insert new key in database
+            try:
+                # We parse and re-write to the right timespec
+                parsed_expiration_date = datetime.fromisoformat(
+                    expiration_date
+                ).isoformat(timespec="seconds")
+            except ValueError as exc:
+                raise HTTPException(
+                    status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="The expiration date could not be parsed. \
+                        Please use ISO 8601.",
+                ) from exc
+
+            c.execute(
+                """
+                INSERT INTO fastapi_simple_security
+                (api_key, is_active, never_expire, expiration_date, \
+                    latest_query_date, total_queries, name)
+                VALUES(?, ?, ?, ?, ?, ?, ?)
+            """,
+                (
+                    api_key,
+                    1,
+                    0,
+                    parsed_expiration_date,
+                    None,
+                    0,
+                    name,
+                ),
+            )
+            connection.commit()
+            return f"Key {name} inserted"
+
     def renew_key(self, api_key: str, new_expiration_date: str) -> Optional[str]:
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
