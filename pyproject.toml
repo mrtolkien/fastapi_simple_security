@@ -8,7 +8,7 @@ repository = "https://github.com/mrtolkien/fastapi_simple_security"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.7.2,<4"
+python = ">=3.11,<4"
 # 0.70 is needed to have the TestClient object
 fastapi = ">=0.70"
 # Necessary as older versions don't work on python 3.10
