@@ -79,16 +79,21 @@ Environment variables:
 
 - `FASTAPI_SIMPLE_SECURITY_SECRET`: Secret administrator key
 
-    - Generated automatically on server startup if not provided
-    - Allows generation of new API keys, revoking of existing ones, and API key usage view
-    - It being compromised compromises the security of the API
+  - Generated automatically on server startup if not provided
+  - Allows generation of new API keys, revoking of existing ones, and API key usage view
+  - It being compromised compromises the security of the API
 
 - `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
 - `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
-    - `sqlite.db` in the running directory by default
-    - When running the app inside Docker, use a bind mount for persistence
+
+  - `sqlite.db` in the running directory by default
+  - When running the app inside Docker, use a bind mount for persistence
+
 - `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
-    - 15 days by default
+  - 15 days by default
+- `FASTAPI_SIMPLE_SECURITY_API_KEY_FILE`: File containing that should be inserted or updated on startup
+
+  - Format: name;api_key;expiration-date
 
 ## Contributing
 
