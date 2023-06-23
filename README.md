@@ -5,6 +5,7 @@
 [![Linting](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![pre-commit enabled][pre-commit badge]][pre-commit project]
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 [pre-commit badge]: <https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white>
 [pre-commit project]: <https://pre-commit.com/>
