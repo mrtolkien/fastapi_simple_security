@@ -224,8 +224,8 @@ class SQLiteAccess:
         with sqlite3.connect(self.db_location) as connection:
             c = connection.cursor()
 
-            # If we get there, this means it’s an active API key that’s in the database.\
-            #   We update the table.
+            # If we get there, this means it’s an active API key that’s in the database
+            #   We update the table
             c.execute(
                 """
             UPDATE fastapi_simple_security

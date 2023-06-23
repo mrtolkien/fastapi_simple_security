@@ -16,15 +16,15 @@ jobs:
       - uses: actions/checkout@v3
 
       # Python setup
-      - name: Set up Python 3.9
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install poetry
         uses: abatilo/actions-poetry@v2.2.0
         with:
-          poetry-version: 1.2
+          poetry-version: 1.4.2
 
       - name: Install python dependencies
         run: |

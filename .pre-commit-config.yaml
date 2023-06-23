@@ -10,27 +10,21 @@ repos:
 
   # https://pre-commit.com/#2-add-a-pre-commit-configuration
   - repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 23.1.0
     hooks:
       - id: black
-        language_version: python3.10
+        language_version: python3.11
 
-  # https://pycqa.github.io/isort/docs/configuration/pre-commit.html
-  - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+  # Linting with Ruff
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.221"
     hooks:
-      - id: isort
-        name: isort (python)
+      - id: ruff
 
-  # https://pylint.pycqa.org/en/latest/user_guide/installation/pre-commit-integration.html
-  - repo: local
+  # Validating conventional pre-commit messages
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: "v2.1.1"
     hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        language: system
-        types: [python]
-        args: [
-            "-rn", # Only display messages
-            "-sn", # Don't display the score
-          ]
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, doc]
