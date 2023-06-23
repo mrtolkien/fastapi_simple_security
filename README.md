@@ -3,6 +3,8 @@
 [![codecov](https://codecov.io/github/mrtolkien/fastapi_simple_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/mrtolkien/fastapi_simple_security)
 [![Python Tests](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml)
 [![Linting](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml)
+
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![pre-commit enabled][pre-commit badge]][pre-commit project]
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)

@@ -1,4 +1,4 @@
-name: Python linting + formatting with Ruff and Black
+name: Python linting
 
 on: [push]
 
