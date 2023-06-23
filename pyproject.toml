@@ -22,6 +22,8 @@ pre-commit = "^2.20.0"
 pylint = "^2.15.4"
 isort = "^5.10.1"
 coverage = "^6.5.0"
+ruff = "^0.0.275"
+httpx = "^0.24.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
