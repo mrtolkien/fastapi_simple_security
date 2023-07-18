@@ -3,8 +3,8 @@
 import os
 import uuid
 import warnings
-
 from secrets import compare_digest
+
 from fastapi import Security
 from fastapi.security import APIKeyHeader
 from starlette.exceptions import HTTPException
