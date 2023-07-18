@@ -64,21 +64,20 @@ async def secret_based_security(header_param: Optional[str] = Security(secret_he
         HTTPException if the authentication failed
     """
 
-    if header_param:
-        # We simply return True if the given secret-key has the right value
-        if compare_digest(header_param, secret.value):
-            return True
+    if not header_param:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail="secret_key must be passed as a header field",
+        )
 
-        # Error text with wrong header param
-        else:
-            error = (
-                "Wrong secret key. If not set through environment variable \
-                    'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
-                "generated automatically at startup and appears in the server logs."
-            )
+    # We simply return True if the given secret-key has the right value
+    if not compare_digest(header_param, secret.value):
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail="Wrong secret key. If not set through environment variable \
+                'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
+            "generated automatically at startup and appears in the server logs.",
+        )
 
-    # Error text without header param
     else:
-        error = "secret_key must be passed as a header field"
-
-    raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail=error)
+        return True
