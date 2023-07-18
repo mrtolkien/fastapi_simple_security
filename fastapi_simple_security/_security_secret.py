@@ -4,6 +4,7 @@ import os
 import uuid
 import warnings
 from secrets import compare_digest
+from typing import Optional
 
 from fastapi import Security
 from fastapi.security import APIKeyHeader
@@ -51,7 +52,7 @@ secret_header = APIKeyHeader(
 )
 
 
-async def secret_based_security(header_param: str = Security(secret_header)):
+async def secret_based_security(header_param: Optional[str] = Security(secret_header)):
     """
     Args:
         header_param: parsed header field secret_header
