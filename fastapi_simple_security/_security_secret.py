@@ -3,6 +3,8 @@
 import os
 import uuid
 import warnings
+from secrets import compare_digest
+from typing import Optional
 
 from fastapi import Security
 from fastapi.security import APIKeyHeader
@@ -50,7 +52,7 @@ secret_header = APIKeyHeader(
 )
 
 
-async def secret_based_security(header_param: str = Security(secret_header)):
+async def secret_based_security(header_param: Optional[str] = Security(secret_header)):
     """
     Args:
         header_param: parsed header field secret_header
@@ -62,20 +64,21 @@ async def secret_based_security(header_param: str = Security(secret_header)):
         HTTPException if the authentication failed
     """
 
-    # We simply return True if the given secret-key has the right value
-    if header_param == secret.value:
-        return True
+    if header_param:
+        # We simply return True if the given secret-key has the right value
+        if compare_digest(header_param, secret.value):
+            return True
+
+        # Error text with wrong header param
+        else:
+            error = (
+                "Wrong secret key. If not set through environment variable \
+                    'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
+                "generated automatically at startup and appears in the server logs."
+            )
 
     # Error text without header param
-    if not header_param:
-        error = "secret_key must be passed as a header field"
-
-    # Error text with wrong header param
     else:
-        error = (
-            "Wrong secret key. If not set through environment variable \
-                'FASTAPI_SIMPLE_SECURITY_SECRET', it was "
-            "generated automatically at startup and appears in the server logs."
-        )
+        error = "secret_key must be passed as a header field"
 
     raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail=error)
