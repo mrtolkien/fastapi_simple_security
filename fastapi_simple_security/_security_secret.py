@@ -1,9 +1,9 @@
 """Secret dependency.
 """
 import os
+import secrets
 import uuid
 import warnings
-from secrets import compare_digest
 from typing import Optional
 
 from fastapi import Security
@@ -71,7 +71,7 @@ async def secret_based_security(header_param: Optional[str] = Security(secret_he
         )
 
     # We simply return True if the given secret-key has the right value
-    if not compare_digest(header_param, secret.value):
+    if not secrets.compare_digest(header_param, secret.value):
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail="Wrong secret key. If not set through environment variable \
