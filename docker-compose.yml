@@ -2,14 +2,14 @@ version: "3.8"
 
 services:
   api:
-    image: fastapi_simple_security
-    container_name: fastapi_simple_security_dev
+    image: fastapi_sqlmodel_security
+    container_name: fastapi_sqlmodel_security_dev
     restart: always
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - FASTAPI_SIMPLE_SECURITY_SECRET=TEST_SECRET
+      - FASTAPI_SQLMODEL_SECURITY_SECRET=TEST_SECRET
     ports:
       - target: 80
         published: 8080
@@ -18,6 +18,6 @@ services:
         source: ./app
         target: /app
       - type: bind
-        source: ./fastapi_simple_security
-        target: /app/fastapi_simple_security
+        source: ./fastapi_sqlmodel_security
+        target: /app/fastapi_sqlmodel_security
     command: /start-reload.sh

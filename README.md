@@ -1,8 +1,8 @@
-# FastAPI simple security
+# FastAPI Simple Security via SQLModel
 
-[![codecov](https://codecov.io/github/mrtolkien/fastapi_simple_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/mrtolkien/fastapi_simple_security)
-[![Python Tests](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/pr_python_tests.yml)
-[![Linting](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/mrtolkien/fastapi_simple_security/actions/workflows/push_linting.yml)
+[![codecov](https://codecov.io/github/cwang/fastapi_sqlmodel_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/mrtolkien/fastapi_sqlmodel_security)
+[![Python Tests](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/mrtolkien/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml)
+[![Linting](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/mrtolkien/fastapi_sqlmodel_security/actions/workflows/push_linting.yml)
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -11,6 +11,8 @@
 
 [pre-commit badge]: <https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white>
 [pre-commit project]: <https://pre-commit.com/>
+
+(This is forked from [FastAPI Simple Security](https://github.com/mrtolkien/fastapi_simple_security/) with an SQLModel adaption. Credits to the original author!)
 
 API key based security package for FastAPI, focused on simplicity of use:
 
@@ -25,21 +27,23 @@ for simple one-server API deployments, mostly during development.
 
 ## Installation
 
-`pip install fastapi_simple_security`
+`pip install fastapi_sqlmodel_security`
 
 ### Usage
 
 ### Creating an application
 
 ```python
-from fastapi_simple_security import api_key_router, api_key_security
+from fastapi_sqlmodel_security import create_auth_router, ApiKeySecurity, DataStore, SqlModelDataStore
 from fastapi import Depends, FastAPI
 
 app = FastAPI()
 
-app.include_router(api_key_router, prefix="/auth", tags=["_auth"])
+data_store = SqlModelDataStore(conn_url="sqlite3:///keys.db")
 
-@app.get("/secure", dependencies=[Depends(api_key_security)])
+app.include_router(create_auth_router(data_store), prefix="/auth", tags=["_auth"])
+
+@app.get("/secure", dependencies=[Depends(ApiKeySecurity(data_store))])
 async def secure_endpoint():
     return {"message": "This is a secure endpoint"}
 ```
@@ -47,6 +51,8 @@ async def secure_endpoint():
 Resulting app is:
 
 ![app](images/auth_endpoints.png)
+
+More can be found in the [demo app](./app/main.py). 
 
 ### API key creation through docs
 
@@ -74,23 +80,21 @@ And finally, you can use this API key to access the secure endpoint.
 You can of course automate API key acquisition through python with `requests` and directly querying the endpoints.
 
 If you do so, you can hide the endpoints from your API documentation with the environment variable
-`FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`.
+`FASTAPI_SQLMODEL_SECURITY_HIDE_DOCS`.
 
 ## Configuration
 
 Environment variables:
 
-- `FASTAPI_SIMPLE_SECURITY_SECRET`: Secret administrator key
+- `FASTAPI_SQLMODEL_SECURITY_SECRET`: Secret administrator key
 
   - Generated automatically on server startup if not provided
   - Allows generation of new API keys, revoking of existing ones, and API key usage view
   - It being compromised compromises the security of the API
 
-- `FASTAPI_SIMPLE_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
-- `FASTAPI_SIMPLE_SECURITY_DB_LOCATION`: Location of the local sqlite database file
-  - `sqlite.db` in the running directory by default
-  - When running the app inside Docker, use a bind mount for persistence
-- `FAST_API_SIMPLE_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
+- `FASTAPI_SQLMODEL_SECURITY_HIDE_DOCS`: Whether or not to hide the API key related endpoints from the documentation
+
+- `FASTAPI_SQLMODEL_SECURITY_AUTOMATIC_EXPIRATION`: Duration, in days, until an API key is deemed expired
   - 15 days by default
 
 ## Contributing

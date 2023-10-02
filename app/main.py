@@ -2,9 +2,17 @@
 """
 from fastapi import Depends, FastAPI
 
-import fastapi_simple_security
+from fastapi_sqlmodel_security import (
+    create_auth_router,
+    ApiKeySecurity,
+    SqlModelDataStore
+)
 
 app = FastAPI()
+
+db_location = "keys.db"
+
+data_store = SqlModelDataStore(conn_url=f"sqlite:///{db_location}")
 
 
 @app.get("/unsecured")
@@ -12,11 +20,11 @@ async def unsecured_endpoint():
     return {"message": "This is an unsecured endpoint"}
 
 
-@app.get("/secure", dependencies=[Depends(fastapi_simple_security.api_key_security)])
+@app.get("/secure", dependencies=[Depends(ApiKeySecurity(data_store))])
 async def secure_endpoint():
     return {"message": "This is a secure endpoint"}
 
 
 app.include_router(
-    fastapi_simple_security.api_key_router, prefix="/auth", tags=["_auth"]
+    router=create_auth_router(data_store), prefix="/auth", tags=["_auth"]
 )

@@ -1,18 +1,17 @@
 """Pytest configuration.
 """
-import os
 import time
+import os
 
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app
-from fastapi_simple_security._sqlite_access import sqlite_access
+from app.main import app, db_location
+from fastapi_sqlmodel_security.data_store import SqlModelDataStore
 
 # The environment variable needs to be set before importing app
 admin_key_value = "secret"
-os.environ["FASTAPI_SIMPLE_SECURITY_SECRET"] = admin_key_value
-
+os.environ["FASTAPI_SQLMODEL_SECURITY_SECRET"] = admin_key_value
 
 @pytest.fixture
 def admin_key():
@@ -21,15 +20,8 @@ def admin_key():
 
 @pytest.fixture
 def client():
-    try:
-        # We remove the existing db file
-        os.remove("sqlite.db")
-        # We had disk I/O errors without this
-        time.sleep(0.1)
-        # We re-create the file and tables
-        sqlite_access.init_db()
-
-    except FileNotFoundError:
-        pass
+    os.remove(db_location) if os.path.exists(db_location) else None
+    time.sleep(0.1)
+    SqlModelDataStore(f"sqlite:///{db_location}")
 
     return TestClient(app)
