@@ -16,7 +16,6 @@ def create_auth_router(data_store: DataStore) -> APIRouter:
 
     show_endpoints = "FASTAPI_SQLMODEL_SECURITY_HIDE_DOCS" not in os.environ
 
-
     @api_key_router.get(
         "/new",
         dependencies=[Depends(secret_based_security)],
@@ -38,15 +37,12 @@ def create_auth_router(data_store: DataStore) -> APIRouter:
         """
         return data_store.create_key(name, never_expires)
 
-
     @api_key_router.get(
         "/revoke",
         dependencies=[Depends(secret_based_security)],
         include_in_schema=show_endpoints,
     )
-    def revoke_api_key(
-        api_key: str = Query(..., alias="api-key", description="the api_key to revoke")
-    ) -> str:
+    def revoke_api_key(api_key: str = Query(..., alias="api-key", description="the api_key to revoke")) -> str:
         """
         Revokes the usage of the given API key
 
@@ -55,7 +51,6 @@ def create_auth_router(data_store: DataStore) -> APIRouter:
             return "API key revoked."
         else:
             raise HTTPException(status_code=404, detail="API key not found")
-
 
     @api_key_router.get(
         "/renew",
@@ -76,8 +71,6 @@ def create_auth_router(data_store: DataStore) -> APIRouter:
         else:
             raise HTTPException(status_code=404, detail="API key not found")
 
-
-
     @api_key_router.get(
         "/logs",
         dependencies=[Depends(secret_based_security)],
@@ -88,8 +81,6 @@ def create_auth_router(data_store: DataStore) -> APIRouter:
         """Returns usage information for all API keys."""
         # TODO Add some sort of filtering on older keys/unused keys?
 
-        return UsageLogs(
-            logs=data_store.get_usage_stats()
-        )
+        return UsageLogs(logs=data_store.get_usage_stats())
 
     return api_key_router

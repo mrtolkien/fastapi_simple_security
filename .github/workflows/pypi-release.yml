@@ -1,13 +1,12 @@
-name: Python Tests
-
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+name: PyPI Package Release
 
 jobs:
-  run-on-pr:
+  release-please:
     runs-on: ubuntu-latest
-
+    environment: production
     steps:
       # Get the files
       - uses: actions/checkout@v3
@@ -31,9 +30,6 @@ jobs:
         run: |
           poetry run coverage run -m pytest -s tests
 
-      - name: Generate and upload coverage reports to Codecov
+      - name: Build and publish
         run: |
-          poetry run coverage xml
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
+          poetry publish --build

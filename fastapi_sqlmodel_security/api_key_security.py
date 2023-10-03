@@ -8,20 +8,16 @@ from fastapi_sqlmodel_security.data_store import DataStore
 
 API_KEY_NAME = "x-api-key"
 
-api_key_query = APIKeyQuery(
-    name=API_KEY_NAME, scheme_name="API key query", auto_error=False
-)
-api_key_header = APIKeyHeader(
-    name=API_KEY_NAME, scheme_name="API key header", auto_error=False
-)
+api_key_query = APIKeyQuery(name=API_KEY_NAME, scheme_name="API key query", auto_error=False)
+api_key_header = APIKeyHeader(name=API_KEY_NAME, scheme_name="API key header", auto_error=False)
 
 
 class ApiKeySecurity:
-
     def __init__(self, data_store: DataStore):
         self.data_store = data_store
 
-    def __call__(self, 
+    def __call__(
+        self,
         query_param: str = Security(api_key_query),
         header_param: str = Security(api_key_header),
     ):
@@ -39,6 +35,6 @@ class ApiKeySecurity:
 
         else:
             raise HTTPException(
-                status_code=HTTP_403_FORBIDDEN, 
+                status_code=HTTP_403_FORBIDDEN,
                 detail="Wrong, revoked, or expired API key.",
             )

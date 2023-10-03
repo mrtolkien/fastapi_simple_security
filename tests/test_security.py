@@ -157,7 +157,6 @@ def test_no_secret():
 
 
 def test_gen_secret():
-
     from fastapi_sqlmodel_security._security_secret import generate_secret_key
 
     value = generate_secret_key()

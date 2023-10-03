@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main, master]
+    branches: [main]
 
 permissions:
   contents: write
@@ -11,8 +11,33 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+
+    environment: testing
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
           release-type: python
-          package-name: release-please-action
+          package-name: fastapi_sqlmodel_security
+
+      # Python setup
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2.2.0
+        with:
+          poetry-version: 1.4.2
+
+      - name: Install python dependencies
+        run: |
+          poetry install
+
+      - name: Run Python tests
+        run: |
+          poetry run coverage run -m pytest -s tests
+
+      - name: Build and publish
+        run: |
+          poetry publish --build

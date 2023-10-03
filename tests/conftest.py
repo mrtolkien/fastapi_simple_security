@@ -13,6 +13,7 @@ from fastapi_sqlmodel_security.data_store import SqlModelDataStore
 admin_key_value = "secret"
 os.environ["FASTAPI_SQLMODEL_SECURITY_SECRET"] = admin_key_value
 
+
 @pytest.fixture
 def admin_key():
     return admin_key_value

@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "fastapi_sqlmodel_security"
 version = "1.3.0"
-description = "API key-based security for FastAPI"
-authors = ["mrtolkien <gary.mialaret@gmail.com>"]
+description = "API key-based security for FastAPI using SQLModel"
+authors = ["Chen Wang <dev@chenwang.org>"]
 license = "MIT"
 repository = "https://github.com/cwang/fastapi_sqlmodel_security"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4"
+python = ">=3.10,<4"
 # 0.70 is needed to have the TestClient object
 fastapi = ">=0.70"
 # Necessary as older versions don't work on python 3.10

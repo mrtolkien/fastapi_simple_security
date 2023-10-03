@@ -20,10 +20,9 @@ def test_database_creation():
         columns = c.fetchall()
         assert len(columns) == 7, columns
 
+
 def test_api_key_name(client: TestClient, admin_key: str):
-    response = client.get(
-        url="/auth/new", headers={"x-secret-key": admin_key}, params={"name": "Test"}
-    )
+    response = client.get(url="/auth/new", headers={"x-secret-key": admin_key}, params={"name": "Test"})
     assert response.status_code == 200
 
     response = client.get("/auth/logs", headers={"x-secret-key": admin_key})

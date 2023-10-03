@@ -7,7 +7,6 @@ from sqlmodel import Field, SQLModel
 
 
 class UsageLog(SQLModel, table=True):
-
     __tablename__ = "usage_log"
 
     api_key: str = Field(primary_key=True)
@@ -21,4 +20,3 @@ class UsageLog(SQLModel, table=True):
 
 class UsageLogs(BaseModel):
     logs: List[UsageLog]
-

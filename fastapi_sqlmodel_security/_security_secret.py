@@ -15,6 +15,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 def generate_secret_key() -> str:
     return str(uuid.uuid4())
 
+
 def generate_expiration_date(supplied: Optional[date] = None) -> datetime:
     if supplied:
         return datetime.combine(supplied, datetime.min.time())
@@ -22,11 +23,12 @@ def generate_expiration_date(supplied: Optional[date] = None) -> datetime:
         return datetime.now() + timedelta(
             days=int(
                 os.environ.get(
-                    "FASTAPI_SQLMODEL_SECURITY_AUTOMATIC_EXPIRATION", 
-                    '15',
+                    "FASTAPI_SQLMODEL_SECURITY_AUTOMATIC_EXPIRATION",
+                    "15",
                 )
             )
         )
+
 
 class GhostLoadedSecret:
     """Ghost-loaded secret handler"""
@@ -64,9 +66,7 @@ auth_secret = GhostLoadedSecret()
 
 SECRET_KEY_NAME = "x-secret-key"
 
-secret_header = APIKeyHeader(
-    name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False
-)
+secret_header = APIKeyHeader(name=SECRET_KEY_NAME, scheme_name="Secret header", auto_error=False)
 
 
 async def secret_based_security(header_param: Optional[str] = Security(secret_header)):

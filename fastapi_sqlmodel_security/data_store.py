@@ -37,7 +37,7 @@ class DataStore(ABC):
 class SqlModelDataStore(DataStore):
     """Data store using SQLModel."""
 
-    def __init__(self, conn_url: str = None, engine = None) -> None:
+    def __init__(self, conn_url: str = None, engine=None) -> None:
         if conn_url:
             self.engine = create_engine(conn_url)
         else:
@@ -59,7 +59,6 @@ class SqlModelDataStore(DataStore):
             session.add(new_key)
             session.commit()
             return new_key.api_key
-
 
     def renew_key(self, api_key: str, new_expiration_date: Optional[date]) -> bool:
         with Session(self.engine) as session:

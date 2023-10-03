@@ -2,11 +2,7 @@
 """
 from fastapi import Depends, FastAPI
 
-from fastapi_sqlmodel_security import (
-    create_auth_router,
-    ApiKeySecurity,
-    SqlModelDataStore
-)
+from fastapi_sqlmodel_security import create_auth_router, ApiKeySecurity, SqlModelDataStore
 
 app = FastAPI()
 
@@ -25,6 +21,4 @@ async def secure_endpoint():
     return {"message": "This is a secure endpoint"}
 
 
-app.include_router(
-    router=create_auth_router(data_store), prefix="/auth", tags=["_auth"]
-)
+app.include_router(router=create_auth_router(data_store), prefix="/auth", tags=["_auth"])
