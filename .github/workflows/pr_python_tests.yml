@@ -30,13 +30,8 @@ jobs:
       - name: Run Python tests
         run: |
           poetry run coverage run -m pytest -s tests
-
-      - name: Configure Test PyPI url and its token
-        run: |
-          poetry config repositories.test-pypi https://test.pypi.org/legacy/
-          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
       
-          - name: Generate and upload coverage reports to Codecov
+      - name: Generate and upload coverage reports to Codecov
         run: |
           poetry run coverage xml
           curl -Os https://uploader.codecov.io/latest/linux/codecov

@@ -30,10 +30,7 @@ jobs:
         run: |
           poetry run coverage run -m pytest -s tests
 
-      - name: Configure PyPI token
-        run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-
       - name: Build and publish
         run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           poetry publish --build

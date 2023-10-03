@@ -35,6 +35,8 @@ jobs:
 
       - name: Build and publish
         run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
           poetry publish --build
 
       - name: Generate and upload coverage reports to Codecov
