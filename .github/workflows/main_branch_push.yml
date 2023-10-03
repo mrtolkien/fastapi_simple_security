@@ -1,12 +1,15 @@
-on:
-  workflow_dispatch:
+name: Release to Test PyPI
 
-name: PyPI Package Release
+on:
+  push:
+    branches: [main]
 
 jobs:
-  release-please:
+  run-on-pr:
     runs-on: ubuntu-latest
-    environment: production
+
+    environment: testing
+
     steps:
       # Get the files
       - uses: actions/checkout@v3
@@ -30,10 +33,13 @@ jobs:
         run: |
           poetry run coverage run -m pytest -s tests
 
-      - name: Configure PyPI token
-        run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-
       - name: Build and publish
         run: |
           poetry publish --build
+
+      - name: Generate and upload coverage reports to Codecov
+        run: |
+          poetry run coverage xml
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
