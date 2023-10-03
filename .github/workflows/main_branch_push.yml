@@ -1,0 +1,45 @@
+name: Python Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-on-pr:
+    runs-on: ubuntu-latest
+
+    environment: testing
+
+    steps:
+      # Get the files
+      - uses: actions/checkout@v3
+
+      # Python setup
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2.2.0
+        with:
+          poetry-version: 1.4.2
+
+      - name: Install python dependencies
+        run: |
+          poetry install
+
+      - name: Run Python tests
+        run: |
+          poetry run coverage run -m pytest -s tests
+
+      - name: Build and publish
+        run: |
+          poetry publish --build
+
+      - name: Generate and upload coverage reports to Codecov
+        run: |
+          poetry run coverage xml
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
