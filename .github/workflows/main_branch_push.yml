@@ -1,4 +1,4 @@
-name: Release to Test PyPI
+name: Run tests and Release to Test PyPI
 
 on:
   push:
@@ -37,7 +37,7 @@ jobs:
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
-          poetry publish --build
+          poetry publish --build --repository test-pypi
 
       - name: Generate and upload coverage reports to Codecov
         run: |
