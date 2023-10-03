@@ -1,6 +1,6 @@
 # FastAPI Simple Security via SQLModel
 
-[![codecov](https://codecov.io/github/cwang/fastapi_sqlmodel_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/cwang/fastapi_sqlmodel_security)
+[![codecov](https://codecov.io/github/cwang/fastapi_sqlmodel_security/branch/main/graph/badge.svg?token=LHTBNHFVKK)](https://codecov.io/github/cwang/fastapi_sqlmodel_security)
 [![Python Tests](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml)
 [![Linting](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml)
 
@@ -33,6 +33,8 @@ for simple one-server API deployments, mostly during development.
 
 ### Creating an application
 
+The key is to configure an instance of [data store](./fastapi_sqlmodel_security/data_store.py), which can usually be done with `SqlModelDataStore` as shown below.
+
 ```python
 from fastapi_sqlmodel_security import create_auth_router, ApiKeySecurity, DataStore, SqlModelDataStore
 from fastapi import Depends, FastAPI
@@ -48,9 +50,11 @@ async def secure_endpoint():
     return {"message": "This is a secure endpoint"}
 ```
 
+Both the auth router and your own routes would need dependencies to be configured with the aforementioned data store.
+
 Resulting app is:
 
-![app](images/auth_endpoints.png)
+![app](./images/auth_endpoints.png)
 
 More can be found in the [demo app](./app/main.py). 
 
@@ -59,21 +63,21 @@ More can be found in the [demo app](./app/main.py).
 Start your API and check the logs for the automatically generated secret key if you did not provide one through
 environment variables.
 
-![secret](images/secret.png)
+![secret](./images/secret.png)
 
 Go to `/docs` on your API and inform this secret key in the `Authorize/Secret header` box.
 All the administrator endpoints only support header security to make sure the secret key is not inadvertently
 shared when sharing an URL.
 
-![secret_header](images/secret_header.png)
+![secret_header](./images/secret_header.png)
 
 Then, you can use `/auth/new` to generate a new API key.
 
-![api key](images/new_api_key.png)
+![api key](./images/new_api_key.png)
 
 And finally, you can use this API key to access the secure endpoint.
 
-![secure endpoint](images/secure_endpoint.png)
+![secure endpoint](./images/secure_endpoint.png)
 
 ### API key creation in python
 
