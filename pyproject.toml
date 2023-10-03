@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi_sqlmodel_security"
-version = "1.3.0"
+version = "0.0.1"
 description = "API key-based security for FastAPI using SQLModel"
 authors = ["Chen Wang <dev@chenwang.org>"]
 license = "MIT"

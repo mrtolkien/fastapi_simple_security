@@ -1,8 +1,8 @@
 # FastAPI Simple Security via SQLModel
 
-[![codecov](https://codecov.io/github/cwang/fastapi_sqlmodel_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/mrtolkien/fastapi_sqlmodel_security)
-[![Python Tests](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/mrtolkien/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml)
-[![Linting](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/mrtolkien/fastapi_sqlmodel_security/actions/workflows/push_linting.yml)
+[![codecov](https://codecov.io/github/cwang/fastapi_sqlmodel_security/branch/master/graph/badge.svg?token=8VIKJ9J3XF)](https://codecov.io/github/cwang/fastapi_sqlmodel_security)
+[![Python Tests](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml/badge.svg)](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/pr_python_tests.yml)
+[![Linting](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml/badge.svg)](https://github.com/cwang/fastapi_sqlmodel_security/actions/workflows/push_linting.yml)
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
