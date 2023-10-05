@@ -13,6 +13,10 @@ def _get_data_store(conn_url: str) -> SqlModelDataStore:
     return SqlModelDataStore(conn_url)
 
 
+def _create_key(data_store: SqlModelDataStore) -> str:
+    return data_store.create_key("test_key", False)
+
+
 def test_database_creation():
     pass
 
@@ -20,17 +24,15 @@ def test_database_creation():
 @pytest.mark.parametrize("conn_url", CONNECTION_URLS)
 def test_create_key(conn_url: str):
     data_store = _get_data_store(conn_url)
-    key = data_store.create_key("test_key", False)
+    key = _create_key(data_store)
     assert key is not None
-
-    return key
 
 
 @pytest.mark.parametrize("conn_url", CONNECTION_URLS)
 def test_revoke_key(conn_url: str):
     data_store = _get_data_store(conn_url)
 
-    key = test_create_key(conn_url)
+    key = _create_key(data_store)
 
     result = data_store.revoke_key(key)
     assert result is True
@@ -40,7 +42,7 @@ def test_revoke_key(conn_url: str):
 def test_renew_key(conn_url: str):
     data_store = _get_data_store(conn_url)
 
-    key = test_create_key(conn_url)
+    key = _create_key(data_store)
 
     result = data_store.renew_key(key, date.today() + timedelta(days=1))
     assert result is True
@@ -54,7 +56,7 @@ def test_get_usage_stats(conn_url: str):
 
     keys = []
     for _ in range(count):
-        keys.append(test_create_key(conn_url))
+        keys.append(_create_key(data_store))
 
     stats = data_store.get_usage_stats()
     assert stats is not None

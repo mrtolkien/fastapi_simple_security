@@ -1,4 +1,5 @@
 """SQLModel-based models for both the APIs and the data storage."""
+import os
 from datetime import datetime
 from typing import List, Optional
 
@@ -7,7 +8,7 @@ from sqlmodel import Field, SQLModel
 
 
 class UsageLog(SQLModel, table=True):
-    __tablename__ = "usage_log"
+    __tablename__ = os.getenv("FASTAPI_SQLMODEL_SECURITY_TABLE_NAME", "fastapi_sqlmodel_api_keys")
 
     api_key: str = Field(primary_key=True)
     name: Optional[str]

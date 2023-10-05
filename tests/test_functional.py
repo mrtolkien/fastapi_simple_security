@@ -16,7 +16,7 @@ def test_database_creation():
 
     with sqlite3.connect(db_location) as connection:
         c = connection.cursor()
-        c.execute("PRAGMA table_info(usage_log);")
+        c.execute("PRAGMA table_info(fastapi_sqlmodel_api_keys);")
         columns = c.fetchall()
         assert len(columns) == 7, columns
 
