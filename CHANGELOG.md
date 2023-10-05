@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/cwang/fastapi_sqlmodel_security/compare/v0.1.0...v0.2.0) (2023-10-05)
+
+
+### Features
+
+* Change database table name ([#15](https://github.com/cwang/fastapi_sqlmodel_security/issues/15)) ([28d99db](https://github.com/cwang/fastapi_sqlmodel_security/commit/28d99db829979c8addc8df07f7aa9cb8bc2d9a07))
+
 ## 0.1.0 (2023-10-03)
 
 
