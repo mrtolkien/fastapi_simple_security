@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/cwang/fastapi_sqlmodel_security/compare/v0.2.0...v1.0.0) (2023-11-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add mocking filter as well as improved tests ([#17](https://github.com/cwang/fastapi_sqlmodel_security/issues/17))
+
+### Features
+
+* Add mocking filter as well as improved tests ([#17](https://github.com/cwang/fastapi_sqlmodel_security/issues/17)) ([43365fa](https://github.com/cwang/fastapi_sqlmodel_security/commit/43365fa33034ad82fd98f0f2743f17592b919a8a))
+
 ## [0.2.0](https://github.com/cwang/fastapi_sqlmodel_security/compare/v0.1.0...v0.2.0) (2023-10-05)
 
 
