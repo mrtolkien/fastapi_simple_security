@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from datetime import date, datetime
 from typing import List, Optional
+from sqlalchemy import Engine
 
 from sqlmodel import Session, SQLModel, create_engine, select
 
@@ -37,11 +38,13 @@ class DataStore(ABC):
 class SqlModelDataStore(DataStore):
     """Data store using SQLModel."""
 
-    def __init__(self, conn_url: str = None, engine=None) -> None:
+    def __init__(self, conn_url: str = None, engine: Engine = None) -> None:
         if conn_url:
             self.engine = create_engine(conn_url)
-        else:
+        elif engine:
             self.engine = engine
+        else:
+            raise ValueError("Either conn_url or engine must be provided")
 
         SQLModel.metadata.create_all(self.engine)
 

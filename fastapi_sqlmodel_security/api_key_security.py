@@ -24,7 +24,7 @@ class ApiKeySecurity:
         if not query_param and not header_param:
             raise HTTPException(
                 status_code=HTTP_403_FORBIDDEN,
-                detail="An API key must be passed as query or header",
+                detail="An API key must be passed as query or header!",
             )
 
         elif query_param and self.data_store.check_key(query_param):
@@ -36,5 +36,25 @@ class ApiKeySecurity:
         else:
             raise HTTPException(
                 status_code=HTTP_403_FORBIDDEN,
-                detail="Wrong, revoked, or expired API key.",
+                detail="Wrong, revoked, or expired API key!",
+            )
+
+
+class NoAuthApiKeySecurity:
+    def __init__(self, data_store: DataStore):
+        self.data_store = data_store
+
+    def __call__(
+        self,
+        query_param: str = Security(api_key_query),
+        header_param: str = Security(api_key_header),
+    ):
+        if query_param:
+            return query_param
+        elif header_param:
+            return header_param
+        else:
+            raise HTTPException(
+                status_code=HTTP_403_FORBIDDEN,
+                detail="Using a no-auth security for mocking although still expecting an API key!",
             )

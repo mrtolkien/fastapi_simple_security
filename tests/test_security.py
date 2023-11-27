@@ -1,5 +1,4 @@
-"""Basic unit testing.
-"""
+"""Basic unit testing."""
 import os
 
 from fastapi.testclient import TestClient
@@ -36,6 +35,16 @@ def test_header(client: TestClient, admin_key: str):
 
     response = client.get("/secure", headers={"x-api-key": api_key})
     assert response.status_code == 200
+
+
+def test_no_auth(client: TestClient):
+    response = client.get("/no-auth?x-api-key=123456")
+    assert response.status_code == 200
+    response = client.get("/no-auth", headers={"x-api-key": "qwerty"})
+    assert response.status_code == 200
+
+    response = client.get("/no-auth")
+    assert response.status_code == 403
 
 
 def test_revoke(client: TestClient, admin_key: str):
@@ -105,21 +114,21 @@ def test_renew_wrong_key(client: TestClient, admin_key: str):
     assert response.status_code == 404
 
 
-# def test_renew_revoked(client: TestClient, admin_key: str):
-#     api_key = get_api_key(client, admin_key)
+def test_renew_revoked(client: TestClient, admin_key: str):
+    api_key = get_api_key(client, admin_key)
 
-#     response = client.get(
-#         f"/auth/revoke?api-key={api_key}",
-#         headers={"x-secret-key": admin_key},
-#     )
+    response = client.get(
+        f"/auth/revoke?api-key={api_key}",
+        headers={"x-secret-key": admin_key},
+    )
 
-#     response = client.get(
-#         f"/auth/renew?api-key={api_key}",
-#         headers={"x-secret-key": admin_key},
-#     )
+    response = client.get(
+        f"/auth/renew?api-key={api_key}",
+        headers={"x-secret-key": admin_key},
+    )
 
-#     assert response.status_code == 200
-#     assert "This API key was revoked and has been reactivated." in response.json()
+    assert response.status_code == 200
+    assert "API key renewed." in response.json()
 
 
 def test_get_usage_stats(client: TestClient, admin_key: str):
@@ -131,8 +140,9 @@ def test_get_usage_stats(client: TestClient, admin_key: str):
     response = client.get("/auth/logs", headers={"x-secret-key": admin_key})
 
     assert response.status_code == 200
-
-    assert response.json()["logs"][0]["total_queries"] == 5
+    data = [x for x in response.json()["logs"] if x.get("api_key") == api_key]
+    assert len(data) == 1
+    assert data[0]["total_queries"] == 5
 
 
 def test_no_admin_key(client: TestClient):

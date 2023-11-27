@@ -86,6 +86,12 @@ You can of course automate API key acquisition through python with `requests` an
 If you do so, you can hide the endpoints from your API documentation with the environment variable
 `FASTAPI_SQLMODEL_SECURITY_HIDE_DOCS`.
 
+### Testing
+
+You may want to use a *no-auth* api key security filter `NoAuthApiKeySecurity` as an alternative to the real filter. 
+
+It does not do any key verification and will never block any requests, as long as they carry an API key of any value.
+
 ## Configuration
 
 Environment variables:
